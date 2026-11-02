@@ -14,9 +14,9 @@
 
 ## GitHub 상태
 
-후보: `https://github.com/SELATL/line-follower-sim` (Private 예정, 아직 생성·업로드하지 않음).
-연결된 GitHub 앱의 목록에 같은 프로젝트가 없고 후보 주소 조회는 404였습니다. 접근이 허용되지 않은 기존 저장소는 조회할 수 없으므로 승인 시 기존 저장소가 있다면 해당 주소를 사용합니다.
-로컬 `main`은 초기화했습니다. 사용자가 Private 저장소 생성·최초 커밋·원격 연결·push를 승인했습니다. 현재 브라우저 GitHub 로그인 후 원격 생성을 진행할 단계이며, 완료 결과는 docs/VALIDATION.md에서 확인합니다.
+저장소: [SELATL/line-follower-sim](https://github.com/SELATL/line-follower-sim) — **Private**.
+사용자 승인 후 저장소 생성과 최초 push를 완료했습니다. 로컬 `main`은 `origin/main`을 추적합니다.
+원본 소스와 초기 커밋 이력을 보존했습니다. 후속 push는 해당 작업에 대한 사용자 승인을 확인합니다.
 
 ## Windows 설치
 
@@ -33,7 +33,7 @@ python -m venv .venv
 
 ## Mac에서 가져오기
 
-아래 clone은 **저장소 생성·push가 끝난 후에만** 가능합니다. Private 저장소 권한이 있는 계정으로 Git 인증을 먼저 설정합니다. 인증 토큰을 URL이나 소스 파일에 넣지 않습니다.
+저장소 생성·최초 push가 완료되어 아래 clone을 사용할 수 있습니다. Private 저장소 권한이 있는 계정으로 Git 인증을 먼저 설정합니다. 인증 토큰을 URL이나 소스 파일에 넣지 않습니다.
 
 ```sh
 git clone https://github.com/SELATL/line-follower-sim.git

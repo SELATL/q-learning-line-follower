@@ -11,9 +11,9 @@
 ## Git 및 GitHub
 
 - 현재 채팅 작업 루트와 실제 개발 프로젝트의 확인한 경로에서 Git 저장소가 발견되지 않았다. 보존할 기존 커밋·브랜치·remote는 확인되지 않았다.
-- 이전용 사본에서 `git init -b main` 실행. 최초 커밋 `240885a` 생성 완료. remote 없음. 이후 문서 상태 갱신은 후속 커밋으로 보존한다.
+- 이전용 사본에서 `git init -b main` 실행. 최초 커밋 `240885a`와 후속 커밋을 보존했다. `origin`은 `https://github.com/SELATL/line-follower-sim.git`, `main`은 `origin/main` 추적.
 - 연결된 GitHub 로그인은 `SELATL`. 앱에 접근 가능한 저장소 목록에는 기존의 다른 프로젝트 하나만 있었다. 후보 `SELATL/line-follower-sim` 조회는 404였다. 권한 밖 저장소의 부재까지 증명하지는 않는다.
-- 후보 URL: `https://github.com/SELATL/line-follower-sim` (Private 예정). 생성·remote 변경·push는 사용자 승인 완료. 브라우저 GitHub 로그인 필요로 아직 실행하지 않았다.
+- 확정 URL: `https://github.com/SELATL/line-follower-sim`. 사용자 로그인 후 UI에서 Private 생성 확인, origin 연결과 최초 push 성공.
 - 현재 GitHub connector에는 저장소 생성 도구가 없고 로컬 `gh`도 찾지 못했다. 승인 후 GitHub UI 등 사용 가능한 방법으로 생성하거나 사용자가 제공한 기존 저장소를 사용한다. 토큰을 파일에 저장하지 않는다.
 
 ## 테스트
@@ -40,8 +40,12 @@
 
 ## 검증 한계 및 다음 확인
 
-새 가상환경에서의 의존성 다운로드·설치는 수행하지 않았다. 이미 설치된 환경에서 검증했다. Mac, Linux/Cloud, 실제 Matplotlib 창의 버튼·키보드, GitHub clone/push는 이번에 검증하지 않았다. 소스의 OS 전용 절대경로나 셸 의존은 발견되지 않았지만 각 OS에서 smoke 검증이 필요하다. 환경변수·서버는 필요 없다.
+새 가상환경에서의 의존성 다운로드·설치는 수행하지 않았다. 이미 설치된 환경에서 검증했다. Mac, Linux/Cloud, 실제 Matplotlib 창의 버튼·키보드, Mac/Cloud clone은 이번에 검증하지 않았다. 최초 push는 성공했다. 소스의 OS 전용 절대경로나 셸 의존은 발견되지 않았지만 각 OS에서 smoke 검증이 필요하다. 환경변수·서버는 필요 없다.
 
 후속 push 시: 중복 저장소 재확인 → 사용자 승인 → Private 설정 → author 정보 검토 → 명시적 파일 stage 및 diff 확인 → 최초 커밋 → remote 설정 → push → Mac/Cloud clone 검증. 기존 저장소를 발견하면 이력과 브랜치를 보존하며 병합 계획을 먼저 검토한다.
 
 최초 stage 점검: 21개 파일을 명시적으로 추가했으며 캐시·환경 파일·snapshot은 제외됨. `git diff --cached --check`는 원본 env.py의 기존 줄 끝 공백 10곳을 보고했다. 소스 보존 원칙에 따라 수정하지 않았다. 실행 오류는 아니다.
+
+## 원격 생성·업로드 완료
+
+사용자 승인과 브라우저 로그인 후 Private 저장소를 빈 상태로 생성했다. GitHub 생성 화면에서 Private 표시를 확인했다. 기존 두 로컬 커밋을 `git push -u origin main`으로 업로드했으며 이력 재작성은 하지 않았다. 문서 상태 갱신은 추가 커밋으로 보존한다. Mac/Cloud 실제 설치는 후속 검증이다.

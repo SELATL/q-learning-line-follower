@@ -27,3 +27,9 @@
 - 최초 커밋 author는 확인된 GitHub 계정 SELATL과 GitHub noreply 주소를 사용해 개인 이메일 노출을 피한다. 시스템 전역 Git 설정은 변경하지 않는다.
 
 - 최초 로컬 커밋 `240885a` 완료(21개 파일). staged 비밀·개인 경로 패턴 발견 없음. 원격은 로그인 완료 후 생성·연결·push 예정.
+
+## GitHub 생성·최초 업로드 완료
+
+- 사용자 로그인 후 `SELATL/line-follower-sim`을 Private으로 생성했다.
+- origin 연결, main 최초 push 및 upstream 설정 성공. 기존 로컬 커밋을 그대로 보존했다.
+- 현재 상태·README·로드맵의 대기 표시를 완료로 갱신했다. Mac/Cloud 실제 실행은 여전히 미검증이다.

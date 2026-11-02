@@ -46,9 +46,9 @@ GitHub에는 문서와 소스가 이동하며 기존 채팅 자체가 자동 복
 
 ## Next Session Handoff
 
-1. **현재 프로젝트 상태:** 규칙 기반 시뮬레이터와 거리 오차 함수까지 구현. Gymnasium·Q-learning 미구현. 원본 소스 보존, GitHub 업로드는 사용자 승인 완료, 브라우저 로그인 및 실제 업로드 대기.
-2. **마지막으로 진행한 작업:** 이전용 사본 작성, 맥락·설계·로드맵·호환성 문서화. 실제 검증 결과는 VALIDATION.md 참조.
-3. **바로 이어서 해야 할 작업:** 사용자의 생성·최초 업로드 승인은 받았다. 브라우저 로그인 및 GitHub 연결 상태를 확인해 원격 생성·업로드를 완료한다. 이후 학습 작업 요청 시 `heading_error()`를 작은 단계로 구현·확인하고 상태 이산화, Gymnasium 어댑터 순으로 진행.
+1. **현재 프로젝트 상태:** 규칙 기반 시뮬레이터와 거리 오차 함수까지 구현. Gymnasium·Q-learning 미구현. 원본 소스 보존, Private 저장소 `https://github.com/SELATL/line-follower-sim` 생성·최초 push 완료.
+2. **마지막으로 진행한 작업:** 이전용 사본 작성, 맥락·설계·로드맵·호환성 문서화. Private 저장소 생성 및 최초 push 완료. 실제 검증 결과는 VALIDATION.md 참조.
+3. **바로 이어서 해야 할 작업:** Mac/Cloud에서 clone·설치·테스트를 검증한다. 저장소 생성·최초 업로드는 완료했다. 이후 학습 작업 요청 시 `heading_error()`를 작은 단계로 구현·확인하고 상태 이산화, Gymnasium 어댑터 순으로 진행.
 4. **주의:** 대화에서 제안한 코드를 존재한다고 가정하지 말 것. 원본 IDE 폴더와 새 저장소를 동시 편집하지 말 것. RL 상태와 센서 관측의 차이를 설명할 것. 이번 작업에서 기능 변경 금지. 새 기능은 별도 작업으로 진행.
 5. **우선 읽을 파일:** AGENTS.md → 이 문서 → ROADMAP.md → DECISIONS.md → ARCHITECTURE.md → VALIDATION.md → line_follower/env.py.
 6. **실행 및 검증:** 루트에서 `python -m pip install -r requirements.txt`, `python -m unittest discover -s tests -v`, `python main.py --snapshot snapshot.png`. env 확인은 AGENTS.md 명령 참조. 새 세션 프롬프트는 SESSION_START.md.
