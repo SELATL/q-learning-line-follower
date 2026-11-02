@@ -11,7 +11,7 @@
 ## Git 및 GitHub
 
 - 현재 채팅 작업 루트와 실제 개발 프로젝트의 확인한 경로에서 Git 저장소가 발견되지 않았다. 보존할 기존 커밋·브랜치·remote는 확인되지 않았다.
-- 이전용 사본에서 `git init -b main` 실행. 최초 커밋 준비, remote 없음.
+- 이전용 사본에서 `git init -b main` 실행. 최초 커밋 `240885a` 생성 완료. remote 없음. 이후 문서 상태 갱신은 후속 커밋으로 보존한다.
 - 연결된 GitHub 로그인은 `SELATL`. 앱에 접근 가능한 저장소 목록에는 기존의 다른 프로젝트 하나만 있었다. 후보 `SELATL/line-follower-sim` 조회는 404였다. 권한 밖 저장소의 부재까지 증명하지는 않는다.
 - 후보 URL: `https://github.com/SELATL/line-follower-sim` (Private 예정). 생성·remote 변경·push는 사용자 승인 완료. 브라우저 GitHub 로그인 필요로 아직 실행하지 않았다.
 - 현재 GitHub connector에는 저장소 생성 도구가 없고 로컬 `gh`도 찾지 못했다. 승인 후 GitHub UI 등 사용 가능한 방법으로 생성하거나 사용자가 제공한 기존 저장소를 사용한다. 토큰을 파일에 저장하지 않는다.
