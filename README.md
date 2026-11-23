@@ -2,7 +2,28 @@
 
 > 아래 원본 설명서는 보존했습니다. 이 안내는 2026-11-03 이전 준비 시 추가했습니다.
 
-이 프로젝트는 LEGO SPIKE Prime 경험을 바탕으로 Q-learning을 배우기 위한 Python 2D 시뮬레이터입니다. **현재 자동 주행은 규칙 기반이며 Q-learning은 아직 구현하지 않았습니다.** `line_follower/env.py`에는 Simulator 래퍼와 거리 오차만 있고 Gymnasium 환경은 아닙니다.
+이 프로젝트는 LEGO SPIKE Prime 경험을 바탕으로 Q-learning을 배우기 위한 Python 2D 시뮬레이터입니다. **`main.py`의 자동 주행은 규칙 기반입니다. Q-learning은 별도의 `dashboard.py`/`train.py`(랜덤 트랙·5행동)로 추가했습니다.** `line_follower/env.py`에는 Simulator 래퍼와 거리 오차만 있고 Gymnasium 환경은 아닙니다.
+
+## Q-learning 대시보드 (2026-11-23 추가)
+
+기존 원형 트랙·3행동 시뮬레이터(`main.py`)는 그대로 두고, 별도 실험으로 랜덤 트랙 + 5행동 Q-learning을 추가했습니다.
+
+```sh
+python train.py --episodes 500 --seed 1          # 화면 없이 학습(약 1분) -> q_table.npy, train_log.csv
+python dashboard.py --load q_table.npy --log train_log.csv   # 학습 결과를 불러와 바로 시연
+python dashboard.py                                 # 빈 Q-table에서 학습 과정을 처음부터 보기
+python dashboard.py --pretrain 400                  # 시작 전 400 에피소드 학습(약 1분 대기)
+```
+
+- 왼쪽: 2D 시뮬레이터. 에피소드마다 시드로 새 트랙을 생성합니다(같은 시드 = 같은 트랙).
+- 오른쪽 위: Q-table 12×5. 빨간 줄 = 현재 상태, 주황 칸 = 방금 고른 행동, 굵은 글씨 = 상태별 최고 행동.
+- 오른쪽 아래: 에피소드 보상, 최근 20회 학습 성공률, epsilon, 미학습 트랙 평가 결과(Q vs 규칙).
+- 키: `t` 학습, `e` 평가(미학습 트랙·탐험 끔), `r` 규칙 기반, `space` 일시정지, `+/-` 속도, `b` 빠른 학습 50회, `x` 미학습 30개 비교, `n` 다음 에피소드, `s` Q-table 저장.
+- 포함된 `q_table.npy`, `train_log.csv`는 `python train.py --episodes 500 --seed 1` 결과입니다.
+
+검증 게이트: `python verify.py` (테스트 + 시드 3개 학습 + 미학습 트랙 비교, 약 2분, 결과는 `runs/<exp>/`). 여러 에이전트로 작업할 때 규칙은 `CLAUDE.md`.
+
+설계 정의(상태·행동·보상·이탈·완주)는 `line_follower/rl_env.py` 맨 위 설명과 `docs/DEVELOPMENT_LOG.md` 2026-11-23 항목을 참조하세요.
 
 ## 새 세션에서 읽을 문서
 

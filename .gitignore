@@ -42,3 +42,6 @@ work/
 artifacts/
 mplconfig/
 .matplotlib/
+
+# Experiment outputs from verify.py
+runs/
