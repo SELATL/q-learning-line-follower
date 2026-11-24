@@ -17,7 +17,7 @@ from multiprocessing import Pool
 
 import numpy as np
 
-# 게이트 기준: 초기값. 직접 실험한 결과를 근거로 조정하고 DEVELOPMENT_LOG에 기록한다.
+# 게이트는 평균 완주율과 최저 시드 완주율을 함께 검사한다. 실행 결과는 summary.json에 기록한다.
 MIN_MEAN_SUCCESS = 0.90   # 시드 평균 미학습 완주율
 MIN_SEED_SUCCESS = 0.70   # 가장 나쁜 시드의 완주율
 
