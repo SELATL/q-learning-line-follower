@@ -36,6 +36,10 @@ class RandomTrack:
                 break
         else:
             raise RuntimeError(f"seed={self.seed}: 트랙 생성 실패")
+        self._finalize()
+
+    def _finalize(self):
+        """중심선 점(self.points)으로 거리 계산용 선분 정보를 만듭니다."""
         seg = np.diff(self.points, axis=0)
         self.seg_start = self.points[:-1]
         self.seg_vec = seg
@@ -147,3 +151,120 @@ class RandomTrack:
         left = self.points + hw * normal
         right = self.points - hw * normal
         return np.vstack([left, right[::-1]])
+
+
+@dataclass
+class MazeTrack(RandomTrack):
+    """격자 미로 속을 지나가는 꼬불꼬불한 한 갈래 길입니다.
+
+    1) cols x rows 격자에 무작위 깊이 우선 탐색(DFS)으로 완전 미로(모든 칸이 한 갈래로 연결)를 만듭니다.
+    2) 왼쪽 열의 한 칸에서 출발해, 미로 길을 따라 path_cells칸 떨어진 칸을 도착점으로 고릅니다.
+    3) 칸 중심을 잇는 길에서 90도 꺾이는 곳은 반지름 cell/2 원호로 둥글게 만듭니다.
+       (U턴은 반지름 cell/2 반원) -> 로봇 강조향 회전 반경 0.10m보다 커서 따라갈 수 있습니다.
+    길이 아닌 칸 사이에는 벽(그리기 전용)이 있습니다. 벽은 주행에 영향을 주지 않습니다.
+    """
+    cols: int = 9
+    rows: int = 6
+    cell: float = 0.30
+    path_cells: tuple = (14, 22)
+    bounds: tuple = (-1.4, 1.4, -0.95, 0.95)
+
+    def __post_init__(self):
+        rng = np.random.default_rng(self.seed)
+        self.links = self._carve(rng)
+        path = self._pick_path(rng)
+        self.path_cells_used = path
+        self.points = self._build_points(path)
+        self._finalize()
+
+    def _carve(self, rng):
+        links = {(c, r): set() for c in range(self.cols) for r in range(self.rows)}
+        start = (0, int(rng.integers(self.rows)))
+        stack, seen = [start], {start}
+        while stack:
+            c, r = stack[-1]
+            nbrs = [(c + dc, r + dr) for dc, dr in ((1, 0), (-1, 0), (0, 1), (0, -1))
+                    if 0 <= c + dc < self.cols and 0 <= r + dr < self.rows and (c + dc, r + dr) not in seen]
+            if not nbrs:
+                stack.pop()
+                continue
+            nxt = nbrs[int(rng.integers(len(nbrs)))]
+            links[(c, r)].add(nxt)
+            links[nxt].add((c, r))
+            seen.add(nxt)
+            stack.append(nxt)
+        self.start_cell = start
+        return links
+
+    def _pick_path(self, rng):
+        parent, order = {self.start_cell: None}, [self.start_cell]
+        depth = {self.start_cell: 0}
+        for cur in order:                       # 너비 우선으로 출발점에서의 미로 거리 계산
+            for n in sorted(self.links[cur]):
+                if n not in parent:
+                    parent[n] = cur
+                    depth[n] = depth[cur] + 1
+                    order.append(n)
+        lo, hi = self.path_cells
+        target = int(rng.integers(lo, hi + 1))
+        cands = sorted(c for c, d in depth.items() if d == target)
+        if not cands:                            # 그 길이의 칸이 없으면 가장 먼 칸
+            far = max(depth.values())
+            cands = sorted(c for c, d in depth.items() if d == far)
+        end = cands[int(rng.integers(len(cands)))]
+        path = [end]
+        while parent[path[-1]] is not None:
+            path.append(parent[path[-1]])
+        return path[::-1]
+
+    def cell_center(self, c, r):
+        x0 = (self.bounds[0] + self.bounds[1]) / 2 - self.cols * self.cell / 2
+        y0 = (self.bounds[2] + self.bounds[3]) / 2 - self.rows * self.cell / 2
+        return np.array([x0 + (c + 0.5) * self.cell, y0 + (r + 0.5) * self.cell])
+
+    def _build_points(self, path):
+        h = self.cell / 2
+        centers = [self.cell_center(*p) for p in path]
+        pts = []
+        for i, ctr in enumerate(centers):
+            d_in = (ctr - centers[i - 1]) / self.cell if i > 0 else None
+            d_out = (centers[i + 1] - ctr) / self.cell if i < len(centers) - 1 else None
+            start = ctr if d_in is None else ctr - d_in * h
+            end = ctr if d_out is None else ctr + d_out * h
+            if d_in is None or d_out is None or np.allclose(d_in, d_out):
+                n = max(2, int(np.hypot(*(end - start)) / self.ds) + 1)
+                seg = np.linspace(start, end, n)
+            else:                                # 90도 꺾임: 칸 모서리를 중심으로 한 사분원
+                center = ctr - d_in * h + d_out * h
+                a0 = np.arctan2(*(start - center)[::-1])
+                a1 = np.arctan2(*(end - center)[::-1])
+                da = (a1 - a0 + np.pi) % (2 * np.pi) - np.pi
+                n = max(2, int(abs(da) * h / self.ds) + 1)
+                ang = a0 + da * np.linspace(0, 1, n)
+                seg = center + h * np.column_stack([np.cos(ang), np.sin(ang)])
+            pts.append(seg if not pts else seg[1:])
+        return np.vstack(pts)
+
+    def walls(self):
+        """그리기용 벽 선분 목록 [(x0,y0,x1,y1), ...]. 연결되지 않은 이웃 칸 사이 + 바깥 테두리."""
+        h = self.cell / 2
+        out = []
+        for c in range(self.cols):
+            for r in range(self.rows):
+                ctr = self.cell_center(c, r)
+                if c + 1 < self.cols and (c + 1, r) not in self.links[(c, r)]:
+                    out.append((ctr[0] + h, ctr[1] - h, ctr[0] + h, ctr[1] + h))
+                if r + 1 < self.rows and (c, r + 1) not in self.links[(c, r)]:
+                    out.append((ctr[0] - h, ctr[1] + h, ctr[0] + h, ctr[1] + h))
+        lo = self.cell_center(0, 0) - h
+        hi = self.cell_center(self.cols - 1, self.rows - 1) + h
+        out += [(lo[0], lo[1], hi[0], lo[1]), (hi[0], lo[1], hi[0], hi[1]),
+                (hi[0], hi[1], lo[0], hi[1]), (lo[0], hi[1], lo[0], lo[1])]
+        return out
+
+
+TRACK_TYPES = {'maze': MazeTrack, 'curvy': RandomTrack}
+
+
+def make_track(kind, seed):
+    return TRACK_TYPES[kind](seed=seed)

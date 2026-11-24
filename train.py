@@ -17,9 +17,10 @@ def main():
     p.add_argument('--eval', type=int, default=30, help='미학습 평가 트랙 수')
     p.add_argument('--save', default='q_table.npy')
     p.add_argument('--log', default='train_log.csv')
+    p.add_argument('--track', choices=['maze', 'curvy'], default='maze', help='코스 종류')
     a = p.parse_args()
 
-    env = RandomTrackEnv()
+    env = RandomTrackEnv(track=a.track)
     agent = QAgent(seed=a.seed)
     rows, t0 = [], time.time()
     for ep in range(a.episodes):

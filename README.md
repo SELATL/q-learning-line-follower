@@ -6,24 +6,26 @@
 
 ## Q-learning 대시보드 (2026-11-23 추가)
 
-기존 원형 트랙·3행동 시뮬레이터(`main.py`)는 그대로 두고, 별도 실험으로 랜덤 트랙 + 5행동 Q-learning을 추가했습니다.
+기존 원형 트랙·3행동 시뮬레이터(`main.py`)는 그대로 두고, 별도 실험으로 랜덤 코스 + 5행동 Q-learning을 추가했습니다.
 
 ```sh
-python train.py --episodes 500 --seed 1          # 화면 없이 학습(약 1분) -> q_table.npy, train_log.csv
-python dashboard.py --load q_table.npy --log train_log.csv   # 학습 결과를 불러와 바로 시연
-python dashboard.py                                 # 빈 Q-table에서 학습 과정을 처음부터 보기
-python dashboard.py --pretrain 400                  # 시작 전 400 에피소드 학습(약 1분 대기)
+# Finder에서 Run Dashboard.command 더블클릭 (가상환경이 없으면 자동 생성)
+python dashboard.py                        # 빈 Q-table에서 학습 시작, 기본 코스: 미로
+python dashboard.py --track curvy          # 부드러운 곡선 코스
+python verify.py --exp e0-baseline         # 테스트 + 시드 3개 학습 + 미학습 트랙 비교 -> runs/<exp>/
+python verify.py --exp e0-seeds10 --seeds 1 2 3 4 5 6 7 8 9 10
+python train.py --episodes 500 --seed 1    # 화면 없이 학습 -> q_table.npy, train_log.csv
 ```
 
-- 왼쪽: 2D 시뮬레이터. 에피소드마다 시드로 새 트랙을 생성합니다(같은 시드 = 같은 트랙).
-- 오른쪽 위: Q-table 12×5. 빨간 줄 = 현재 상태, 주황 칸 = 방금 고른 행동, 굵은 글씨 = 상태별 최고 행동.
-- 오른쪽 아래: 에피소드 보상, 최근 20회 학습 성공률, epsilon, 미학습 트랙 평가 결과(Q vs 규칙).
-- 키: `t` 학습, `e` 평가(미학습 트랙·탐험 끔), `r` 규칙 기반, `space` 일시정지, `+/-` 속도, `b` 빠른 학습 50회, `x` 미학습 30개 비교, `n` 다음 에피소드, `s` Q-table 저장.
-- 포함된 `q_table.npy`, `train_log.csv`는 `python train.py --episodes 500 --seed 1` 결과입니다.
+- 코스: `--track maze`(기본)는 9×6 격자 미로를 무작위 DFS로 만들고 그 안의 한 갈래 길(14~22칸, 약 3.5~6 m)을 선으로 씁니다. 90도 꺾임은 반지름 0.15 m 원호, 회색 선은 그리기 전용 벽입니다. `--track curvy`는 부드러운 곡선 코스입니다. 같은 시드 = 같은 코스.
+- 왼쪽: 시뮬레이터, 센서 LED(검정 감지 시 초록), 지금 상태의 의미.
+- 오른쪽 위: Q-table. 줄 = "센서가 본 것 × 직전 조향", 칸 = 행동별 Q값, ★ = 그 줄의 최선 행동, 괄호 = 방문 횟수.
+- 오른쪽 아래: 학습 진행률(목표 에피소드 대비), 학습 방향(최근 완주율과 직전 구간 비교), 보상·완주율 그래프, 미학습 트랙 평가.
+- 버튼: 시드 입력 + 새 학습, 학습/평가/규칙 모드, 일시정지, 한 스텝, 다음 트랙, 빠른 학습 50, 미학습 30개 비교, 속도.
+- 키: `t` 학습, `e` 평가, `r` 규칙, `space` 일시정지, `.` 한 스텝, `n` 다음 트랙, `+/-` 속도, `b` 빠른 학습, `x` 미학습 비교, `s` Q-table 저장.
+- 학습 결과 파일은 저장소에 포함하지 않습니다. 학습 실험은 사용자가 직접 진행하며 결과는 실험 기록 시트에 남깁니다.
 
-검증 게이트: `python verify.py` (테스트 + 시드 3개 학습 + 미학습 트랙 비교, 약 2분, 결과는 `runs/<exp>/`). 여러 에이전트로 작업할 때 규칙은 `CLAUDE.md`.
-
-설계 정의(상태·행동·보상·이탈·완주)는 `line_follower/rl_env.py` 맨 위 설명과 `docs/DEVELOPMENT_LOG.md` 2026-11-23 항목을 참조하세요.
+설계 정의(상태·행동·보상·이탈·완주)는 `line_follower/rl_env.py` 맨 위 설명과 `docs/DEVELOPMENT_LOG.md`를 참조하세요. 여러 에이전트로 작업할 때 규칙은 `CLAUDE.md`.
 
 ## 새 세션에서 읽을 문서
 

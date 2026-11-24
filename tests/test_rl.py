@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 
-from line_follower.random_track import RandomTrack
+from line_follower.random_track import RandomTrack, MazeTrack
 from line_follower import rl_env as R
 from line_follower.qlearning import QAgent, rule_policy, run_episode, EVAL_SEED_BASE
 
@@ -22,6 +22,30 @@ class RandomTrackTests(unittest.TestCase):
         self.assertEqual(t.reflectance_from_distance(0.0), 0)
         self.assertEqual(t.reflectance_from_distance(1.0), 100)
         self.assertAlmostEqual(float(t.reflectance_from_distance(t.line_width / 2 + t.edge_width / 2)), 50)
+
+
+class MazeTrackTests(unittest.TestCase):
+    def test_same_seed_same_maze(self):
+        np.testing.assert_array_equal(MazeTrack(seed=3).points, MazeTrack(seed=3).points)
+        self.assertNotEqual(MazeTrack(seed=3).path_cells_used, MazeTrack(seed=4).path_cells_used)
+
+    def test_path_follows_open_maze_cells(self):
+        for seed in range(10):
+            m = MazeTrack(seed=seed)
+            path = m.path_cells_used
+            self.assertEqual(len(set(path)), len(path))             # 같은 칸을 두 번 지나지 않음
+            for a, b in zip(path, path[1:]):
+                self.assertIn(b, m.links[a])                         # 벽을 뚫지 않음
+            gaps = np.hypot(*np.diff(m.points, axis=0).T)
+            self.assertLess(gaps.max(), 0.01)                        # 끊김 없는 중심선
+
+    def test_corner_radius_is_followable(self):
+        m = MazeTrack(seed=0)
+        self.assertGreater(m.cell / 2, 0.10)                          # 강조향 회전 반경 0.10 m보다 큼
+
+    def test_rule_baseline_finishes_maze(self):
+        r = run_episode(R.RandomTrackEnv(track='maze'), EVAL_SEED_BASE + 1, rule_policy)
+        self.assertEqual(r['outcome'], 'finish')
 
 
 class EnvTests(unittest.TestCase):

@@ -24,7 +24,7 @@ class QAgent:
 
     @property
     def alpha(self):
-        """학습률도 선형 감쇠: 상태가 흑백으로 뭉개져 있어(aliasing) 고정 학습률이면 greedy 정책이 흔들립니다."""
+        """학습률 선형 감쇠. alpha_end를 alpha와 같게 주면 고정 학습률이 됩니다."""
         frac = min(self.episode / max(self.alpha_decay, 1), 1.0)
         return self.alpha_start + (self.alpha_end - self.alpha_start) * frac
 

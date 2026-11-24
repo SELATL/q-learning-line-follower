@@ -10,7 +10,7 @@
     1) 완주:  진행 거리 s >= 트랙 길이 - FINISH_TOL 이고 이탈 아님      -> +50, 종료
     2) 이탈:  로봇 중심과 중심선 거리 > OFFTRACK_DIST                   -> -20, 종료
     3) 그 외: -0.05 (시간)
-              + 2 x (이번 step 진행량 / 최대 진행량)   (로봇 중심이 선 폭 안이고 앞으로 갔을 때만)
+              + 2 x 중심도   (앞으로 갔을 때만. 중심도는 CENTERING_MODE로 선택)
               - 1 (과도 조향: 직전 좌계열 -> 지금 우계열, 또는 반대로 즉시 반전)
     max_steps 도달은 '시간 제한(truncated)'이며 실패 종료(terminated)와 구분합니다.
 
@@ -23,7 +23,7 @@ import numpy as np
 
 from .robot import Robot
 from .sensors import ColorSensors
-from .random_track import RandomTrack
+from .random_track import make_track
 
 
 class RLAction(IntEnum):
@@ -54,7 +54,7 @@ REWARD_OVERSTEER = -1.0
 OFFTRACK_DIST = 0.07     # m, 로봇 중심 기준
 FINISH_TOL = 0.03        # m
 BLACK_THRESHOLD = 50.0   # 반사광 < 50 이면 검정
-CENTERING_MODE = 'linear'  # 'linear' | 'band'(초안: 선 폭 안이면 +2)
+CENTERING_MODE = 'linear'  # 'linear': 중심 1 -> 이탈 경계 0 | 'band': 선 폭 안이면 1, 밖이면 0
 
 
 def action_dir(action):
@@ -93,14 +93,16 @@ class StepInfo:
 
 
 class RandomTrackEnv:
-    def __init__(self, dt=0.05, sensors=None):
+    def __init__(self, dt=0.05, sensors=None, track='maze'):
+        """track: 'maze'(격자 미로, 기본) 또는 'curvy'(부드러운 곡선)."""
         self.dt = dt
+        self.track_kind = track
         self.sensors = sensors or ColorSensors()
         self.max_progress = 0.12 * dt
         self.track = None
 
     def reset(self, seed):
-        self.track = RandomTrack(seed=seed)
+        self.track = make_track(self.track_kind, seed)
         x, y, th = self.track.start_pose()
         self.robot = MotorRobot(x=x, y=y, theta=th)
         self.prev_dir = 1
