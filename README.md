@@ -1,8 +1,8 @@
 # Why Q-Learning Fails: Instability Analysis on a 2D Line Follower
 
-> **Tabular Q-learning을 실전 로봇 제어에 그대로 쓰기 어려운 이유는 무엇일까요?**
+> **Tabular Q-learning을 실전 제어에 그대로 쓰기 어려운 이유는 무엇일까요?**
 
-규칙 기반 정책으로 완주한 평가 미로 30개를 [2D 라인트래커]에서 Tabular Q-learning의 시드별 성능과 학습 중단 시점에 따른 변화를 실험했습니다.
+규칙 기반 정책으로 완주한 평가 미로 30개를 [2D 라인트래커]에서 Tabular Q-learning의 시드별 성능과 학습 중단 시점에 따른 변화를 실험해보고 왜 단순 Tabular Q-learning을 실전 제어에 쓰기 어려운 이유를 실험적으로 증명했습니다.
 
 ![대시보드: 왼쪽 2D 주행, 오른쪽 위 실시간 Q-table, 오른쪽 아래 학습 지표](docs/img/dashboard.png)
 
