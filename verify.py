@@ -27,10 +27,10 @@ ACTION_KO = ['직진', '약하게 왼쪽', '강하게 왼쪽', '약하게 오른
 
 
 def train_and_eval(args):
-    seed, episodes, n_eval, track, gamma = args
+    seed, episodes, n_eval, track, gamma, alpha_end = args
     from line_follower.rl_env import RandomTrackEnv
     from line_follower.qlearning import QAgent, run_episode, evaluate, train_seed
-    env, agent, rows = RandomTrackEnv(track=track), QAgent(seed=seed, gamma=gamma), []
+    env, agent, rows = RandomTrackEnv(track=track), QAgent(seed=seed, gamma=gamma, alpha_end=alpha_end), []
     wobble = 0   # 마지막 100 에피소드 중 감시 줄의 ★이 '강하게 오른쪽'이 아니었던 횟수
     for ep in range(episodes):
         eps, alpha = agent.epsilon, agent.alpha
@@ -66,6 +66,7 @@ def main():
     p.add_argument('--eval', type=int, default=30)
     p.add_argument('--quick', action='store_true', help='시드 1개만')
     p.add_argument('--track', choices=['maze', 'curvy'], default='maze', help='코스 종류')
+    p.add_argument('--alpha-end', type=float, default=0.01, help='α 하한 (기본 0.01, 0이면 400ep 이후 Q 고정)')
     p.add_argument('--gamma', type=float, default=0.95, help='할인율 γ (기본 0.95)')
     a = p.parse_args()
     if a.quick:
@@ -81,7 +82,7 @@ def main():
     from line_follower.qlearning import QAgent, evaluate, rule_policy, EVAL_SEED_BASE
     out = os.path.join('runs', a.exp)
     os.makedirs(out, exist_ok=True)
-    ag = QAgent()
+    ag = QAgent(alpha_end=a.alpha_end)
     config = {
         'exp': a.exp, 'created': datetime.now().isoformat(timespec='seconds'), 'git_commit': git_commit(),
         'track': a.track, 'gamma': a.gamma, 'seeds': a.seeds, 'episodes': a.episodes, 'eval_tracks': a.eval, 'eval_seed_base': EVAL_SEED_BASE,
@@ -97,7 +98,7 @@ def main():
     print(f'\n[2/3] 학습: 코스 {a.track}, 시드 {a.seeds} x {a.episodes} 에피소드 (병렬)', flush=True)
     t0 = time.time()
     with Pool(min(len(a.seeds), os.cpu_count() or 1)) as pool:
-        results = pool.map(train_and_eval, [(s, a.episodes, a.eval, a.track, a.gamma) for s in a.seeds])
+        results = pool.map(train_and_eval, [(s, a.episodes, a.eval, a.track, a.gamma, a.alpha_end) for s in a.seeds])
     with open(os.path.join(out, 'metrics.csv'), 'w', newline='') as f:
         w = csv.DictWriter(f, fieldnames=results[0][1][0].keys())
         w.writeheader()

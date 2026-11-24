@@ -45,3 +45,7 @@ mplconfig/
 
 # Experiment outputs from verify.py
 runs/
+
+# Single-run outputs from train.py / dashboard
+q_table.npy
+train_log.csv
