@@ -1,0 +1,88 @@
+{
+  "passed": false,
+  "gate": {
+    "min_mean_success": 0.9,
+    "min_seed_success": 0.7
+  },
+  "q_learning": {
+    "per_seed": {
+      "1": {
+        "success": 1.0,
+        "mean_progress": 0.9939289758756923,
+        "wobble_last100": 100,
+        "gap_hard_minus_soft": -3.762742371113262,
+        "final_best": 3
+      },
+      "2": {
+        "success": 0.0,
+        "mean_progress": 0.16672095386649993,
+        "wobble_last100": 0,
+        "gap_hard_minus_soft": 14.16684729032503,
+        "final_best": 4
+      },
+      "3": {
+        "success": 1.0,
+        "mean_progress": 0.9940458548133329,
+        "wobble_last100": 0,
+        "gap_hard_minus_soft": 4.662678174881734,
+        "final_best": 4
+      },
+      "4": {
+        "success": 0.0,
+        "mean_progress": 0.17498126934702687,
+        "wobble_last100": 100,
+        "gap_hard_minus_soft": -9.277946924249825,
+        "final_best": 3
+      },
+      "5": {
+        "success": 0.0,
+        "mean_progress": 0.10040924338535383,
+        "wobble_last100": 100,
+        "gap_hard_minus_soft": 0.17226765403417232,
+        "final_best": 1
+      },
+      "6": {
+        "success": 1.0,
+        "mean_progress": 0.9939207005415728,
+        "wobble_last100": 3,
+        "gap_hard_minus_soft": 3.222635920874893,
+        "final_best": 4
+      },
+      "7": {
+        "success": 1.0,
+        "mean_progress": 0.9938759777219153,
+        "wobble_last100": 0,
+        "gap_hard_minus_soft": 2.6742692309808547,
+        "final_best": 4
+      },
+      "8": {
+        "success": 0.0,
+        "mean_progress": 0.1825671353315568,
+        "wobble_last100": 100,
+        "gap_hard_minus_soft": -0.7823050879921709,
+        "final_best": 0
+      },
+      "9": {
+        "success": 0.0,
+        "mean_progress": 0.06783078188152723,
+        "wobble_last100": 100,
+        "gap_hard_minus_soft": -1.3274758639947635,
+        "final_best": 0
+      },
+      "10": {
+        "success": 1.0,
+        "mean_progress": 0.9939651801270859,
+        "wobble_last100": 3,
+        "gap_hard_minus_soft": 1.1528332591565231,
+        "final_best": 4
+      }
+    },
+    "mean_success": 0.5,
+    "min_success": 0.0
+  },
+  "rule_based": {
+    "success": 1.0,
+    "mean_progress": 0.9939554201257931
+  },
+  "wobble_total": 506
+}
